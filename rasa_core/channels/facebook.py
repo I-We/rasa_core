@@ -161,22 +161,45 @@ class MessengerBot(OutputChannel):
                                        {"sender": {"id": recipient_id}},
                                        'RESPONSE')
 
-    def send_custom_message(self, recipient_id: Text,
-                            elements: List[Dict[Text, Any]]) -> None:
+    def send_custom_message(self, recipient_id, payload):
+        # type: (Text, List[Dict[Text, Any]]) -> None
         """Sends elements to the output."""
 
-        for element in elements:
-            self._add_postback_info(element['buttons'])
-
-        payload = {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "generic",
-                    "elements": elements
+        # for element in elements:
+        #     self._add_postback_info(element['buttons'])
+        payload = {"attachment":{
+                "type":"template",
+                "payload":{
+                    "template_type":"generic",
+                    "elements":[
+                            {
+                                "title":"Je veux faire une nouvelle declaration de sinistre",
+                                "image_url":"https://www2.le.ac.uk/digitalsignage/slideshow/chemistry/images/archive/upto-dec-16/red.png",
+                                "subtitle":"",
+                                "buttons":[
+                                  {
+                                    "type":"postback",
+                                    "title":"Commencer",
+                                    "payload":'/start_declaration{"task":"newClaim"}'
+                                  }
+                                ]
+                            },
+                            {
+                                "title":"Je veux des renseignements sur mon sinistre",
+                                "subtitle":"etat de mon dossier, coordonnees de l'expert, heure de mon rdv...",
+                                "image_url":"http://greensportsalliance.org/images/lightGreenSquare.gif",
+                                "buttons":[
+                                  {
+                                    "type":"postback",
+                                    "title":"Commencer",
+                                    "payload":"/need_info{'task':'needInfo'}"
+                                  }
+                                ]
+                            },
+                        ]
+                    }
                 }
             }
-        }
         self.messenger_client.send(payload,
                                    self._recipient_json(recipient_id),
                                    'RESPONSE')
