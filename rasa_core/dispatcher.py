@@ -81,6 +81,12 @@ class Dispatcher(object):
         self.latest_bot_messages.append(bot_message)
         self.output_channel.send_custom_message(self.sender_id, elements)
 
+    def utter_typing_on(self):
+        # type: (*Dict[Text, Any]) -> None
+        """Shows the bot is typing"""
+
+        self.output_channel.typing_on()
+
     def utter_button_message(self, text, buttons, **kwargs):
         # type: (Text, List[Dict[Text, Any]], Any) -> None
         """Sends a message with buttons to the output channel."""
@@ -164,3 +170,4 @@ class Dispatcher(object):
                          "".format(template))
 
         return message
+

@@ -9,8 +9,7 @@ import logging
 from typing import Text, List, Dict, Any, Callable
 
 import six
-from fbmessenger import (
-    BaseMessenger, MessengerClient, attachments)
+from fbmessenger import (BaseMessenger, MessengerClient, attachments)
 from fbmessenger.elements import Text as FBText
 from flask import Blueprint, request, jsonify
 
@@ -79,7 +78,10 @@ class Messenger(BaseMessenger):
         out_channel = MessengerBot(self.client)
         user_msg = UserMessage(text, out_channel, sender_id,
                                input_channel=self.name())
-
+	# self.messenger_client.send({"sender_action":"typing_on"},
+	# 			    {"recipient":{"id":sender_id}},
+    #
+	# 			)
         # noinspection PyBroadException
         try:
             self.on_new_message(user_msg)
@@ -178,48 +180,65 @@ class MessengerBot(OutputChannel):
                                        {"sender": {"id": recipient_id}},
                                        'RESPONSE')
 
-    def send_custom_message(self, recipient_id, payload):
+    def send_custom_message(self, recipient_id, elements):
         # type: (Text, List[Dict[Text, Any]]) -> None
         """Sends elements to the output."""
 
         # for element in elements:
         #     self._add_postback_info(element['buttons'])
-        payload = {"attachment":{
-                "type":"template",
-                "payload":{
-                    "template_type":"generic",
-                    "elements":[
-                            {
-                                "title":"Je veux faire une nouvelle declaration de sinistre",
-                                "image_url":"https://www2.le.ac.uk/digitalsignage/slideshow/chemistry/images/archive/upto-dec-16/red.png",
-                                "subtitle":"",
-                                "buttons":[
-                                  {
-                                    "type":"postback",
-                                    "title":"Commencer",
-                                    "payload":'/start_declaration{"task":"newClaim"}'
-                                  }
-                                ]
-                            },
-                            {
-                                "title":"Je veux des renseignements sur mon sinistre",
-                                "subtitle":"etat de mon dossier, coordonnees de l'expert, heure de mon rdv...",
-                                "image_url":"http://greensportsalliance.org/images/lightGreenSquare.gif",
-                                "buttons":[
-                                  {
-                                    "type":"postback",
-                                    "title":"Commencer",
-                                    "payload":"/need_info{'task':'needInfo'}"
-                                  }
-                                ]
-                            },
-                        ]
-                    }
+        payload = {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": elements
                 }
             }
+        }
+        # payload = {"attachment":{
+        #                         "type":"template",
+        #                         "payload":{
+        #                             "template_type":"generic",
+        #                             "elements":[
+        #                                     {
+        #                                         "title":"Je veux faire une nouvelle declaration de sinistre",
+        #                                         "image_url":"https://www2.le.ac.uk/digitalsignage/slideshow/chemistry/images/archive/upto-dec-16/red.png",
+        #                                         "subtitle":"",
+        #                                         "buttons":[
+        #                                           {
+        #                                             "type":"postback",
+        #                                             "title":"Commencer",
+        #                                             "payload":'/start_declaration{"task":"newClaim"}'
+        #                                           }
+        #                                         ]
+        #                                     },
+        #                                     {
+        #                                         "title":"Je veux des renseignements sur mon sinistre",
+        #                                         "subtitle":"etat de mon dossier, coordonnees de l'expert, heure de mon rdv...",
+        #                                         "image_url":"http://greensportsalliance.org/images/lightGreenSquare.gif",
+        #                                         "buttons":[
+        #                                           {
+        #                                             "type":"postback",
+        #                                             "title":"Commencer",
+        #                                             "payload":"/need_info{'task':'needInfo'}"
+        #                                           }
+        #                                         ]
+        #                                     },
+        #                                 ]
+        #                             }
+        #                         }
+        #                     }
         self.messenger_client.send(payload,
                                    self._recipient_json(recipient_id),
                                    'RESPONSE')
+
+    def typing_on(self):
+        typing_on = SenderAction(sender_action='typing_on')
+        self.messenger_client.send_action(typing_on.to_dict())
+
+    def typing_off(self):
+        typing_ffn = SenderAction(sender_action='typing_off')
+        self.messenger_client.send_action(typing_off.to_dict())
 
     @staticmethod
     def _add_postback_info(buttons):
@@ -338,3 +357,4 @@ class FacebookInput(InputChannel):
             if hub_signature == generated_hash:
                 return True
         return False
+
