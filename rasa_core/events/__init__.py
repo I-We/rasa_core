@@ -309,7 +309,7 @@ class BotUttered(Event):
         # type: (DialogueStateTracker) -> None
 
         tracker.latest_bot_utterance = self
-        tracker.followup_action = "action_schedule_reminder" 
+        # tracker.followup_action = "action_schedule_reminder" 
         #return [ReminderScheduled("action_reminder", datetime.datetime.now() + timedelta(minutes=1), kill_on_user_message=True)]
 
     def as_story_string(self):
