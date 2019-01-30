@@ -310,7 +310,7 @@ class BotUttered(Event):
 
         tracker.latest_bot_utterance = self
         # tracker.followup_action = "action_schedule_reminder" 
-        #return [ReminderScheduled("action_reminder", datetime.datetime.now() + timedelta(minutes=1), kill_on_user_message=True)]
+	#return [ReminderScheduled(action_name="action_reminder", trigger_date=datetime.datetime.now() + timedelta(minutes=1), kill_on_user_message=True)]
 
     def as_story_string(self):
         return None
@@ -401,7 +401,7 @@ class SlotSet(Event):
             raise ValueError("Failed to parse set slot event. {}".format(e))
 
     def apply_to(self, tracker):
-        tracker._set_slot(self.key, self.value)
+        tracker.set_slot(self.key, self.value)
 
 
 # noinspection PyProtectedMember

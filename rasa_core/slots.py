@@ -212,8 +212,9 @@ class CategoricalSlot(Slot):
                 if v == str(self.value).lower():
                     r[i] = 1.0
                     break
-            	
-                elif self.value is not None:
+
+            else:
+                if self.value is not None:
                     logger.warning(
                             "Categorical slot '{}' is set to a value ('{}') "
                             "that is not specified in the domain. "

@@ -456,7 +456,7 @@ class DialogueStateTracker(object):
         for slot in self.slots.values():
             slot.reset()
 
-    def _set_slot(self, key, value):
+    def set_slot(self, key, value):
         # type: (Text, Any) -> None
         """Set the value of a slot if that slot exists."""
 

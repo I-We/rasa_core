@@ -357,4 +357,3 @@ class FacebookInput(InputChannel):
             if hub_signature == generated_hash:
                 return True
         return False
-

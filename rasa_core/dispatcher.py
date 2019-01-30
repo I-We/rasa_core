@@ -170,4 +170,3 @@ class Dispatcher(object):
                          "".format(template))
 
         return message
-

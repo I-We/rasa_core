@@ -144,12 +144,7 @@ class Domain(object):
         merged_intents = merge_dicts(intents_1, intents_2, override)
         combined['intents'] = list(merged_intents.values())
 
-        # remove existing forms from new actions
-        for form in combined['forms']:
-            if form in domain_dict['actions']:
-                domain_dict['actions'].remove(form)
-
-        for key in ['entities', 'actions', 'forms']:
+        for key in ['entities', 'actions']:
             combined[key] = merge_lists(combined[key],
                                         domain_dict[key])
 
@@ -297,7 +292,7 @@ class Domain(object):
 
         if self.num_actions <= index or index < 0:
             raise IndexError(
-                    "Cannot access action at index {}. "
+                    "Can not access action at index {}. "
                     "Domain has {} actions.".format(index, self.num_actions))
         return self.action_for_name(self.action_names[index],
                                     action_endpoint)
@@ -319,7 +314,7 @@ class Domain(object):
         action_names = "\n".join(["\t - {}".format(a)
                                   for a in self.action_names])
         raise NameError(
-                "Cannot access action '{}', "
+                "Can not access action '{}', "
                 "as that name is not a registered action for this domain. "
                 "Available actions are: \n{}"
                 "".format(action_name, action_names))
@@ -580,21 +575,9 @@ class Domain(object):
                 if intent.get("use_entities"):
                     data["intents"][idx] = name
 
-        for slot in data["slots"].values():
+        for name, slot in data["slots"].items():
             if slot["initial_value"] is None:
                 del slot["initial_value"]
-            if slot["auto_fill"]:
-                del slot["auto_fill"]
-            if slot["type"].startswith('rasa_core.slots'):
-                slot["type"] = Slot.resolve_by_type(slot["type"]).type_name
-
-        if data["config"]["store_entities_as_slots"]:
-            del data["config"]["store_entities_as_slots"]
-
-        # clean empty keys
-        data = {k: v
-                for k, v in data.items()
-                if v != {} and v != [] and v is not None}
 
         utils.dump_obj_as_yaml_to_file(filename, data)
 

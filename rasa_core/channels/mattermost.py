@@ -102,7 +102,7 @@ class MattermostInput(InputChannel):
                 except Exception as e:
                     logger.error("Exception when trying to handle "
                                  "message.{0}".format(e))
-                    logger.debug(e, exc_info=True)
+                    logger.error(e, exc_info=True)
                     pass
             return make_response()
 
