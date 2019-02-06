@@ -219,7 +219,7 @@ class MongoTrackerStore(TrackerStore):
         if self.event_broker:
             self.stream_events(tracker)
 
-        state = tracker.current_state(EventVerbosity.ALL)
+        state = tracker.current_state(EventVerbosity.AFTER_RESTART)
 
         self.conversations.update_one(
                 {"sender_id": tracker.sender_id},
